@@ -1,0 +1,78 @@
+express-api/
+│
+├─ server.js
+├─ package.json
+├─ routes/
+│   └─ products.js
+├─ controllers/
+│   └─ productsController.js
+├─ models/
+│   └─ productModel.js
+├─ middleware/
+│   ├─ logger.js
+│   ├─ auth.js
+│   ├─ validate.js
+│   └─ errorHandler.js
+├─ errors/
+│   ├─ NotFoundError.js
+│   └─ ValidationError.js
+├─ .gitignore
+└─ postman_collection.json
+const express = require('express');
+const bodyParser = require('body-parser');
+const productRoutes = require('./routes/products');
+const logger = require('./middleware/logger');
+const auth = require('./middleware/auth');
+const errorHandler = require('./middleware/errorHandler');
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+app.use(logger);
+app.use(auth);
+
+// Routes
+app.get('/', (req, res) => res.send('Hello World'));
+app.use('/api/products', productRoutes);
+
+// Global Error Handler
+app.use(errorHandler);
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+{
+  "info": {
+    "name": "Express API",
+    "_postman_id": "12345678-abcd-efgh-ijkl-1234567890ab",
+    "description": "Collection for testing Express.js Products API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Products",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "my-secret-key" }
+        ],
+        "url": { "raw": "http://localhost:3000/api/products", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api","products"] }
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "my-secret-key" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"name\": \"Laptop\", \"description\": \"Gaming laptop\", \"price\": 1200, \"category\": \"Electronics\", \"inStock\": true }"
+        },
+        "url": { "raw": "http://localhost:3000/api/products", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api","products"] }
+      }
+    }
+  ]
+}
